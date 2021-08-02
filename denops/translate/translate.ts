@@ -2,7 +2,7 @@ const endpoint =
   "https://script.google.com/macros/s/AKfycbzdOBxUB9-PeT86IhOJO7oTbjEjJAf8ECUfrqW06eKLQTy8xdaLtUBmexx94Jl3cLNb/exec";
 
 interface translateResult {
-  status: number;
+  code: number;
   text: string;
 }
 
@@ -19,7 +19,7 @@ export async function translate(
 
   const res = await fetch(url);
   if (res.status != 200) {
-    return { status: res.status, text: "" };
+    return { code: res.status, text: "" };
   } else {
     return await res.json();
   }
