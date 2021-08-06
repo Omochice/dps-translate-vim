@@ -49,15 +49,18 @@ export async function openPopup(
   const winCol = await denops.call("wincol");
   ensureNumber(winRow);
   ensureNumber(winCol);
+
   // +1 is right border
-  const over = (winCol + contentMaxWidth + 1) - winWidth;
-  const col = over > 0 ? winCol - over : winCol;
+  const over = Math.max(0, (winCol + contentMaxWidth + 1) - winWidth);
+  const row = denops.meta.host === "vim" ? "cursor" : winRow;
+  const col = denops.meta.host === "vim" ? `cursor-${over}` : winCol - over;
+  // if define above "col" in style = {}, break the highlights
 
   if (style == undefined) {
     style = {
-      relative: "win",
-      row: denops.meta.host === "vim" ? "cursor" : winRow,
-      col: denops.meta.host === "vim" ? "cursor" : col,
+      relative: "win", // on vim, this option is meaningless
+      row: row,
+      col: col,
       width: contentMaxWidth,
       height: Array.isArray(content) ? content.length : 1,
       border: true,
