@@ -8,4 +8,4 @@ export {
   ensureString,
   isString,
 } from "https://deno.land/x/unknownutil@v1.0.0/mod.ts";
-export * as popup from "https://raw.githubusercontent.com/Omochice/denops-popup/change-relative/mod.ts";
+export * as popup from "https://raw.githubusercontent.com/Omochice/denops-popup/vim-popup-option/mod.ts";

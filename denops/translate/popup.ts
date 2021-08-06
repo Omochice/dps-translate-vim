@@ -56,8 +56,8 @@ export async function openPopup(
   if (style == undefined) {
     style = {
       relative: "win",
-      row: winRow,
-      col: col,
+      row: denops.meta.host === "vim" ? "cursor" : winRow,
+      col: denops.meta.host === "vim" ? "cursor" : col,
       width: contentMaxWidth,
       height: Array.isArray(content) ? content.length : 1,
       border: true,
