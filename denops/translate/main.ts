@@ -1,6 +1,7 @@
 import {
   Denops,
   ensureArray,
+  ensureNumber,
   ensureString,
   execute,
   isString,
@@ -15,6 +16,7 @@ export async function main(denops: Denops) {
       bang: unknown,
       line1: unknown,
       line2: unknown,
+      joinWithSpace: unknown,
       arg: unknown,
     ): Promise<void> {
       // Language identification
@@ -30,16 +32,20 @@ export async function main(denops: Denops) {
       );
       ensureString(sourceLanguage);
       ensureString(targetLanguage);
+      ensureNumber(line1);
+      ensureNumber(line2);
 
       // Specifying the target text
       let targetText;
-      if (arg === undefined) {
+      if (arg == undefined && joinWithSpace) {
+        targetText = (await denops.call("getline", line1, line2) as string[])
+          .join(" ");
+      } else if (arg == undefined) {
         targetText = await denops.call("getline", line1, line2);
         ensureArray(targetText, isString);
       } else {
         targetText = arg;
         ensureString(targetText);
-        console.log("args using");
       }
 
       // Translation
@@ -61,8 +67,23 @@ export async function main(denops: Denops) {
       // Error handling and showing
       if (translateResult.code != 200) {
         console.error(
-          `[dps-translate] ERROR status code is ${translateResult.code}`,
+          `[dps-translate] ERROR status code is ${translateResult.code}.`,
         );
+      } else if (joinWithSpace) {
+        const len = Math.floor(
+          translateResult.text.length / (line2 - line1 + 1),
+        );
+        const regex = new RegExp(".{1," + `${len}` + "}", "g");
+        const splited = translateResult.text.match(regex);
+        if (splited == null) {
+          console.error(
+            `[dps-translate] ERROR invalid result of translation. ${
+              JSON.stringify(translateResult)
+            }`,
+          );
+        } else {
+          openPopup(denops, splited, true);
+        }
       } else {
         openPopup(denops, translateResult.text.split("\n"), true);
       }
@@ -71,7 +92,8 @@ export async function main(denops: Denops) {
   await execute(
     denops,
     `
-    command! -bang -range -nargs=? Translate call denops#notify("${denops.name}", "dpsTranslate", ["<bang>", <line1>, <line2>, <f-args>])
+    command! -bang -range -nargs=? Translate call denops#notify("${denops.name}", "dpsTranslate", ["<bang>", <line1>, <line2>, v:false, <f-args>])
+    command! -bang -range -nargs=? TranslateJoin call denops#notify("${denops.name}", "dpsTranslate", ["<bang>", <line1>, <line2>, v:true, <f-args>])
     `,
   );
 }

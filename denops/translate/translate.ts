@@ -11,8 +11,10 @@ export async function translate(
   sourceLanguage: string,
   targetLanguage: string,
 ): Promise<translateResult> {
+  const text = typeof rowStr === "string" ? rowStr : rowStr.join("\n");
+
   const url = endpoint + "?" + new URLSearchParams({
-    text: Array.isArray(rowStr) ? rowStr.join("\n") : rowStr,
+    text: text,
     source: sourceLanguage,
     target: targetLanguage,
   });
