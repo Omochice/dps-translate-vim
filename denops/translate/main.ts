@@ -50,26 +50,29 @@ export async function main(denops: Denops) {
 
       // Translation
       let translateResult;
-      if (bang === "!") {
-        translateResult = await translate(
-          targetText,
-          targetLanguage,
-          sourceLanguage,
+      try {
+        if (bang === "!") {
+          translateResult = await translate(
+            targetText,
+            targetLanguage,
+            sourceLanguage,
+          );
+        } else {
+          translateResult = await translate(
+            targetText,
+            sourceLanguage,
+            targetLanguage,
+          );
+        }
+      } catch (e) {
+        // other than 200
+        console.error(
+          `[dps-translate] ${e}`,
         );
-      } else {
-        translateResult = await translate(
-          targetText,
-          sourceLanguage,
-          targetLanguage,
-        );
+        return await Promise.resolve();
       }
 
-      // Error handling and showing
-      if (translateResult.code != 200) {
-        console.error(
-          `[dps-translate] ERROR status code is ${translateResult.code}.`,
-        );
-      } else if (joinWithSpace) {
+      if (joinWithSpace) {
         const len = Math.floor(
           translateResult.text.length / (line2 - line1 + 1),
         );

@@ -21,7 +21,7 @@ export async function translate(
 
   const res = await fetch(url);
   if (res.status != 200) {
-    return { code: res.status, text: "" };
+    throw new Error(`Invalid status [${res.status}]`)
   } else {
     return await res.json();
   }
