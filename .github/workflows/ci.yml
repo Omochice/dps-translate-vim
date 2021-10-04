@@ -1,0 +1,26 @@
+name: deno-test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.ts"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "**/*.ts"
+      - ".github/workflows/ci.yml"
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout Deno Module
+        uses: actions/checkout@v2
+      - name: Set up Deno
+        uses: denolib/setup-deno@v2
+      - name: Test Deno Module
+        run: deno test
