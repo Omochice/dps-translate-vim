@@ -24,10 +24,14 @@ export async function translate(
     throw new Error(`Invalid status [${res.status}]`);
   } else {
     try {
-      return await res.json();
+      const json = await res.json();
+      if (json.code != 200) {
+        throw new Error(`Invalid status [${json.code}]`);
+      }
+      return json
     } catch (e) {
-      // json decode error
-      throw e
+      // json decode error or not 200
+      throw e;
     }
   }
 }
