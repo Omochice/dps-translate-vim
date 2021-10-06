@@ -1,4 +1,4 @@
-import { autocmd, Denops, ensureNumber, execute, popup } from "./deps.ts";
+import { autocmd, Denops, ensureNumber, execute, popup, vars } from "./deps.ts";
 
 async function makeEmptyBuffer(denops: Denops): Promise<number> {
   if (denops.meta.host === "nvim") {
@@ -29,6 +29,18 @@ export async function openPopup(
   autoclose = false,
   style?: popup.PopupWindowStyle,
 ): Promise<void> {
+  // If open popup already, close it
+  const isOpened = await vars.g.get(denops, "translate_is_opened", -1); // -1 means not opened
+  ensureNumber(isOpened);
+  if (isOpened != -1) {
+    await vars.g.set(denops, "translate_is_opened", -1);
+    try {
+      await denops.eval(closeCmd(denops, isOpened));
+    } catch (_) {
+      return Promise.resolve();
+    }
+  }
+
   // if inclode double width characters(ex. japanese),
   // string.length not work well
   let contentMaxWidth = content.length;
@@ -71,6 +83,7 @@ export async function openPopup(
 
   const popupWinId = await popup.open(denops, popupBufnr, style);
   ensureNumber(popupWinId);
+  await vars.g.set(denops, "translate_is_opened", popupWinId);
 
   await denops.call("setbufline", popupBufnr, 1, content);
 
