@@ -101,7 +101,7 @@ export async function openPopup(
       helper.define(
         ["CursorMoved", "CursorMovedI", "VimResized"],
         "*",
-        `if (line('.') != ${row} || virtcol('.') != ${vcol}) | call ${cmd} | augroup dps_float_close | autocmd! | augroup END | endif`,
+        `if (line('.') != ${row} || virtcol('.') != ${vcol}) | call ${cmd} | let g:translate_is_opened = -1 | augroup dps_float_close | autocmd! | augroup END | endif`,
       );
     });
   }
