@@ -5,10 +5,10 @@ import {
   ensureString,
   execute,
   isString,
+  openPopup,
   vars,
 } from "./deps.ts";
 import { translate } from "./translate.ts";
-import { openPopup } from "./popup.ts";
 
 export async function main(denops: Denops) {
   denops.dispatcher = {
@@ -85,10 +85,12 @@ export async function main(denops: Denops) {
             }`,
           );
         } else {
-          openPopup(denops, splited, true);
+          openPopup(denops, splited, { autoclose: true });
         }
       } else {
-        openPopup(denops, translateResult.text.split("\n"), true);
+        openPopup(denops, translateResult.text.split("\n"), {
+          autoclose: true,
+        });
       }
     },
   };

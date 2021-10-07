@@ -8,4 +8,5 @@ export {
   ensureString,
   isString,
 } from "https://deno.land/x/unknownutil@v1.1.3/mod.ts";
-export * as popup from "https://pax.deno.dev/Omochice/denops-popup@dev/mod.ts";
+export { openPopup } from "https://pax.deno.dev/Omochice/dps-popup-toy/mod.ts"
+
