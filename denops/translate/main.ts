@@ -10,7 +10,7 @@ import {
 } from "./deps.ts";
 import { translate } from "./translate.ts";
 
-export async function main(denops: Denops) {
+export function main(denops: Denops): void {
   denops.dispatcher = {
     async dpsTranslate(
       bang: unknown,
@@ -94,11 +94,4 @@ export async function main(denops: Denops) {
       }
     },
   };
-  await execute(
-    denops,
-    `
-    command! -bang -range -nargs=? Translate call denops#notify("${denops.name}", "dpsTranslate", ["<bang>", <line1>, <line2>, v:false, <f-args>])
-    command! -bang -range -nargs=? TranslateJoin call denops#notify("${denops.name}", "dpsTranslate", ["<bang>", <line1>, <line2>, v:true, <f-args>])
-    `,
-  );
 }
