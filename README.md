@@ -1,10 +1,13 @@
 
 # dps-translate-vim
 
+The translate plugin for Vim/Neovim using [denops.vim](https://github.com/vim-denops/denops.vim).
+
+Respect for [skanehira/translate.vim](https://github.com/skanehira/translate.vim).
 
 ## Install
 
-This plugin is depends on [denops.vim](https://github.com/vim-denops/denops.vim)
+This plugin is depends on [denops.vim](https://github.com/vim-denops/denops.vim).
 
 - `vim-plug`
     ```vim
@@ -48,4 +51,5 @@ This plugin is depends on [denops.vim](https://github.com/vim-denops/denops.vim)
 ![Join](https://i.gyazo.com/7a3a477763de36d4fc754b9556bd8ffe.gif)
 
 ## LICENSE
-MIT.
+
+MIT
