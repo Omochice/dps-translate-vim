@@ -1,7 +1,7 @@
-export type { Denops } from "https://deno.land/x/denops_std@v2.1.3/mod.ts";
-export { execute } from "https://deno.land/x/denops_std@v2.1.3/helper/mod.ts";
-export * as vars from "https://deno.land/x/denops_std@v2.1.3/variable/mod.ts";
-export * as autocmd from "https://deno.land/x/denops_std@v2.1.3/autocmd/mod.ts";
+export type { Denops } from "https://deno.land/x/denops_std@v2.2.0/mod.ts";
+export { execute } from "https://deno.land/x/denops_std@v2.2.0/helper/mod.ts";
+export * as vars from "https://deno.land/x/denops_std@v2.2.0/variable/mod.ts";
+export * as autocmd from "https://deno.land/x/denops_std@v2.2.0/autocmd/mod.ts";
 export {
   ensureArray,
   ensureNumber,
