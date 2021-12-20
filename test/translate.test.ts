@@ -1,5 +1,5 @@
 import { translate } from "../denops/translate/translate.ts";
-import { assert, assertEquals, assertThrowsAsync } from "./dev_deps.ts";
+import { assert, assertEquals, assertRejects } from "./dev_deps.ts";
 
 const MOCK_404 = async (): Promise<Response> => {
   return await new Response(
@@ -37,8 +37,8 @@ const MOCK_INVALID_JSON = async (): Promise<Response> => {
 Deno.test({
   name: "If returned status code is not 200, the function should throw error",
   fn: () => {
-    window.fetch = MOCK_404;
-    assertThrowsAsync(
+    self.fetch = MOCK_404;
+    assertRejects(
       () => translate("test string", "EN", "JA"),
     );
   },
@@ -48,7 +48,7 @@ Deno.test({
   name:
     "If returned status code is 200, the function should return valid result.",
   fn: async () => {
-    window.fetch = MOCK_200;
+    self.fetch = MOCK_200;
     const actual = await translate("test string", "EN", "JA");
     assert("code" in actual, "result should have 'code' property");
     assert("text" in actual, "result should have 'text' property");
@@ -59,8 +59,8 @@ Deno.test({
 Deno.test({
   name: "If josned body is invalid syntax, the function should throw error",
   fn: () => {
-    window.fetch = MOCK_INVALID_JSON;
-    assertThrowsAsync(
+    self.fetch = MOCK_INVALID_JSON;
+    assertRejects(
       () => translate("test string", "EN", "JA"),
     );
   },
