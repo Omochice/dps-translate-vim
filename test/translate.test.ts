@@ -39,7 +39,7 @@ Deno.test({
   fn: () => {
     self.fetch = MOCK_404;
     assertRejects(
-      () => translate("test string", "EN", "JA"),
+      () => translate(["test string"], "EN", "JA"),
     );
   },
 });
@@ -49,7 +49,7 @@ Deno.test({
     "If returned status code is 200, the function should return valid result.",
   fn: async () => {
     self.fetch = MOCK_200;
-    const actual = await translate("test string", "EN", "JA");
+    const actual = await translate(["test string"], "EN", "JA");
     assert("code" in actual, "result should have 'code' property");
     assert("text" in actual, "result should have 'text' property");
     assertEquals(actual.code, 200, "result.code should be 200");
@@ -61,7 +61,7 @@ Deno.test({
   fn: () => {
     self.fetch = MOCK_INVALID_JSON;
     assertRejects(
-      () => translate("test string", "EN", "JA"),
+      () => translate(["test string"], "EN", "JA"),
     );
   },
 });

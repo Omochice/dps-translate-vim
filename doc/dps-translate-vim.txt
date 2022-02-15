@@ -18,7 +18,7 @@ INSTALL					*dps-translate-vim-install*
 This plugin depends on below.
 
 * Vim >= 8.1.2424 or Neovim >= 0.4.4
-* Deno >= 1.11.0
+* Deno >= 1.8
 * vim-denops/denops.vim
 (<https://github.com/vim-denops/denops.vim>)
 
@@ -50,8 +50,7 @@ Also, you can give a sentence as an argument.
 If you want to translate multiple lines like this help text as one
 sentence, use `TranslateJoin`.
 >
-	If you want to translate multiple lines like this help text as one
-	sentence, use `TranslateJoin`.
+	:'<,'>TranslateJoin
 <
 Select some lines on visual mode and execute `TranslateJoin`.
 
@@ -68,11 +67,11 @@ VARIABLES				*dps-translate-vim-variables*
 
 `g:dps_translate_source`		*g:dps_translate_source*
 	The string of translation source language.
-	Default: None
+	Default: 'en'
 
 `g:dps_translate_target`		*g:dps_translate_target*
 	The string of translation source language.
-	Default: None
+	Default: 'ja'
 
 
 vim:tw=78:fo=tcq2mM:ts=4:ft=help:norl:noet:fdm=marker:fen:
