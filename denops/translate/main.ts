@@ -4,94 +4,72 @@ import {
   ensureNumber,
   ensureString,
   execute,
+  fn,
   isString,
   openPopup,
   vars,
 } from "./deps.ts";
-import { translate } from "./translate.ts";
+import { extractTranslatedText, translate } from "./translate.ts";
+import { constract } from "./constract.ts";
 
 export function main(denops: Denops): void {
   denops.dispatcher = {
     async dpsTranslate(
       bang: unknown,
-      line1: unknown,
-      line2: unknown,
+      line1: number,
+      line2: number,
       joinWithSpace: unknown,
       arg: unknown,
     ): Promise<void> {
       // Language identification
-      const sourceLanguage = await vars.g.get(
+      const sourceLanguage: Promise<string> = vars.g.get(
         denops,
         "dps_translate_source",
         "en",
       );
-      const targetLanguage = await vars.g.get(
+      const targetLanguage: Promise<string> = vars.g.get(
         denops,
         "dps_translate_target",
         "ja",
       );
-      ensureString(sourceLanguage);
-      ensureString(targetLanguage);
-      ensureNumber(line1);
-      ensureNumber(line2);
 
-      // Specifying the target text
-      let targetText;
-      if (arg == undefined && joinWithSpace) {
-        targetText = (await denops.call("getline", line1, line2) as string[])
-          .join(" ");
-      } else if (arg == undefined) {
-        targetText = await denops.call("getline", line1, line2);
-        ensureArray(targetText, isString);
+      let text: string[];
+      if (typeof arg === "undefined") {
+        text = await fn.getline(denops, line1, line2);
+        text = joinWithSpace ? [text.join(" ")] : text;
       } else {
-        targetText = arg;
-        ensureString(targetText);
+        ensureString(arg);
+        text = [arg];
       }
 
-      // Translation
-      let translateResult;
+      const [source, target] = await Promise.all([
+        sourceLanguage,
+        targetLanguage,
+      ]).then(([s, t]) => {
+        return bang == "!" ? [t, s] : [s, t];
+      });
+
+      let translated: string;
       try {
-        if (bang === "!") {
-          translateResult = await translate(
-            targetText,
-            targetLanguage,
-            sourceLanguage,
-          );
-        } else {
-          translateResult = await translate(
-            targetText,
-            sourceLanguage,
-            targetLanguage,
-          );
-        }
+        const res = await translate(text, source, target);
+        translated = extractTranslatedText(res);
       } catch (e) {
-        // other than 200
-        console.error(
-          `[dps-translate] ${e}`,
-        );
-        return await Promise.resolve();
+        console.error(`[dps-translate] ${e}`);
+        return;
       }
 
-      if (joinWithSpace) {
-        const len = Math.floor(
-          translateResult.text.length / (line2 - line1 + 1),
-        );
-        const regex = new RegExp(".{1," + `${len}` + "}", "g");
-        const splited = translateResult.text.match(regex);
-        if (splited == null) {
-          console.error(
-            `[dps-translate] ERROR invalid result of translation. ${
-              JSON.stringify(translateResult)
-            }`,
-          );
-        } else {
-          openPopup(denops, splited, { autoclose: true });
+      const segmenter = new Intl.Segmenter(target, { granularity: "sentence" });
+      const sentences = Array.from(segmenter.segment(translated)).map((s) =>
+        s.segment
+      );
+      const winWidth = Math.floor(await fn.winwidth(denops, ".") * 0.8);
+      const constracted: string[] = [];
+      for (const x of sentences) {
+        for (const splitted of await constract(denops, x, winWidth)) {
+          constracted.push(splitted);
         }
-      } else {
-        openPopup(denops, translateResult.text.split("\n"), {
-          autoclose: true,
-        });
-      }
+      } // FIXME sentences.map() not work well
+      openPopup(denops, constracted, { autoclose: true });
     },
   };
 }
