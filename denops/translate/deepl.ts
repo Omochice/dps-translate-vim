@@ -7,7 +7,7 @@ interface TranslationResponce {
   text: string;
 }
 
-const knownErrors: Record<number, string> = {
+const KnownErrors: Record<number, string> = {
   400: "Bad request. Please check error message and your parameters.",
   403: "Authorization failed. Please supply a valid auth_key parameter.",
   404: "The requested resource could not be found.",
@@ -19,21 +19,21 @@ const knownErrors: Record<number, string> = {
   503: "Resource currently unavailable. Try again later.",
   529: "Too many requests. Please wait and resend your request.",
 }; // this from https://www.deepl.com/docs-api/accessing-the-api/error-handling/
-async function translate(
+
+export async function translate(
   text: string[],
-  authKey: string,
   sourceLanguage: string,
   targetLanguage: string,
-  isPro = false,
+  option: { authKey: string; isPro?: boolean } = { authKey: "", isPro: false },
 ): Promise<DeeplResponce> {
-  const endpoint = isPro
+  const endpoint = option.isPro
     ? "https://api.deepl.com/v2/translate"
     : "https://api-free.deepl.com/v2/translate";
   const body = new URLSearchParams({
-    auth_key: authKey,
+    auth_key: option.authKey,
     source_lang: sourceLanguage,
     target_lang: targetLanguage,
-    text: text.join(" "),
+    text: text.join("\n"),
   });
 
   const res = await fetch(endpoint, {
@@ -41,10 +41,18 @@ async function translate(
     body: body,
   });
 
-  if (res.status in knownErrors) {
-    throw new Error(`[${res.status}]${knownErrors[res.status]}`);
+  if (res.status in KnownErrors) {
+    throw new Error(`[${res.status}]${KnownErrors[res.status]}`);
   }
 
   const response: DeeplResponce = await res.json();
   return response;
+}
+
+export function extractTranslatedText(response: DeeplResponce): string {
+  let text = "";
+  for (const translation of response.translations) {
+    text += translation.text;
+  }
+  return text;
 }
