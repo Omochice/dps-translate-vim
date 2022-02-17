@@ -7,6 +7,7 @@ export async function translate(
   text: string[],
   sourceLanguage: string,
   targetLanguage: string,
+  _option?: null,
 ): Promise<TranslateResult> {
   const endpoint =
     "https://script.google.com/macros/s/AKfycbzdOBxUB9-PeT86IhOJO7oTbjEjJAf8ECUfrqW06eKLQTy8xdaLtUBmexx94Jl3cLNb/exec";
