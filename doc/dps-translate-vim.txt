@@ -34,7 +34,7 @@ First, set `g:dps_translate_source` and `g:dps_translate_target`.
 Run `Translate` on normal mode, The result of translation is shown
 on popup / floating window.
 >
-	The text you want to translate.
+	:Translate
 <
 
 When cursor is on the line, `Translate` show translated the text on 
