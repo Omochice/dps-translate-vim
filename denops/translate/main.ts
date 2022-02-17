@@ -9,8 +9,9 @@ import {
   openPopup,
   vars,
 } from "./deps.ts";
-import { extractTranslatedText, translate } from "./translate.ts";
 import { constract } from "./constract.ts";
+import * as deepl from "./deepl.ts";
+import * as google from "./translate.ts";
 
 export function main(denops: Denops): void {
   denops.dispatcher = {
@@ -49,23 +50,43 @@ export function main(denops: Denops): void {
         return bang == "!" ? [t, s] : [s, t];
       });
 
+      const engines = {
+        google: google,
+        deepl: deepl,
+      };
+      const engine = await vars.g.get(denops, "dps_translate_engine", "google");
+      ensureString(engine);
+      if (!engine in engines) {
+        console.error(`[dps-translate] ${engine} is not provided`);
+        return;
+      }
+      const choised = engines[engine];
+
       let translated: string;
       try {
-        const res = await translate(text, source, target);
-        translated = extractTranslatedText(res);
+        const token = vars.g.get(denops, `dps_translate_${engine}_token`, "");
+        const isPro = vars.g.get(
+          denops,
+          `dps_translate_${engine}_is_pro`,
+          false,
+        );
+        const res = await choised.translate(text, source, target, {
+          authKey: await token,
+          isPro: await isPro,
+        });
+        translated = choised.extractTranslatedText(res);
       } catch (e) {
         console.error(`[dps-translate] ${e}`);
         return;
       }
 
       const segmenter = new Intl.Segmenter(target, { granularity: "sentence" });
-      const sentences = Array.from(segmenter.segment(translated)).map((s) =>
-        s.segment
-      );
+      const sentences = segmenter.segment(translated);
       const winWidth = Math.floor(await fn.winwidth(denops, ".") * 0.8);
+      ensureNumber(winWidth);
       const constracted: string[] = [];
       for (const x of sentences) {
-        for (const splitted of await constract(denops, x, winWidth)) {
+        for (const splitted of await constract(denops, x.segment, winWidth)) {
           constracted.push(splitted);
         }
       } // FIXME sentences.map() not work well
