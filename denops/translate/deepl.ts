@@ -7,7 +7,7 @@ interface TranslationResponce {
   text: string;
 }
 
-const KnownErrors: Record<number, string> = {
+export const KnownErrors: Record<number, string> = {
   400: "Bad request. Please check error message and your parameters.",
   403: "Authorization failed. Please supply a valid auth_key parameter.",
   404: "The requested resource could not be found.",
