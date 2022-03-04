@@ -4,9 +4,9 @@ export * as fn from "https://deno.land/x/denops_std@v3.1.4/function/mod.ts";
 export * as vars from "https://deno.land/x/denops_std@v3.1.4/variable/mod.ts";
 export * as autocmd from "https://deno.land/x/denops_std@v3.1.4/autocmd/mod.ts";
 export {
-  ensureArray,
-  ensureNumber,
-  ensureString,
+  assertArray,
+  assertNumber,
+  assertString,
   isString,
 } from "https://deno.land/x/unknownutil@v2.0.0/mod.ts";
 export { openPopup } from "https://pax.deno.dev/Omochice/dps-popup-toy/mod.ts";

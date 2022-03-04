@@ -1,8 +1,8 @@
 import {
   Denops,
-  ensureArray,
-  ensureNumber,
-  ensureString,
+  assertArray,
+  assertNumber,
+  assertString,
   execute,
   fn,
   isString,
@@ -39,7 +39,7 @@ export function main(denops: Denops): void {
         text = await fn.getline(denops, line1, line2);
         text = joinWithSpace ? [text.join(" ")] : text;
       } else {
-        ensureString(arg);
+        assertString(arg);
         text = [arg];
       }
 
@@ -55,7 +55,7 @@ export function main(denops: Denops): void {
         deepl: deepl,
       };
       const engine = await vars.g.get(denops, "dps_translate_engine", "google");
-      ensureString(engine);
+      assertString(engine);
       if (!engine in engines) {
         console.error(`[dps-translate] ${engine} is not provided`);
         return;
@@ -83,7 +83,7 @@ export function main(denops: Denops): void {
       const segmenter = new Intl.Segmenter(target, { granularity: "sentence" });
       const sentences = segmenter.segment(translated);
       const winWidth = Math.floor(await fn.winwidth(denops, ".") * 0.8);
-      ensureNumber(winWidth);
+      assertNumber(winWidth);
       const constracted: string[] = [];
       for (const x of sentences) {
         for (const splitted of await constract(denops, x.segment, winWidth)) {
