@@ -69,6 +69,8 @@ export function main(denops: Denops): void {
           constracted.push(splitted);
         }
       } // FIXME sentences.map() not work well
+
+      // open buffer
       openPopup(denops, constracted, { autoclose: true });
     },
   };
