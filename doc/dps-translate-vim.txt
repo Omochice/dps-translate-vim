@@ -34,7 +34,7 @@ First, set `g:dps_translate_source` and `g:dps_translate_target`.
 Run `Translate` on normal mode, The result of translation is shown
 on popup / floating window.
 >
-	The text you want to translate.
+	:Translate
 <
 
 When cursor is on the line, `Translate` show translated the text on 
@@ -53,6 +53,15 @@ sentence, use `TranslateJoin`.
 	:'<,'>TranslateJoin
 <
 Select some lines on visual mode and execute `TranslateJoin`.
+
+Also, you can use deepl(https://www.deepl.com) for translation.
+For using,
+>
+	:let g:dps_translate_engine = 'deepl'
+	:let g:dps_translate_deepl_token = '<your token>'
+	" If you contract as pro plan
+	:let g:dps_translate_deepl_is_pro = v:true 
+<
 
 ==============================================================================
 COMMANDS				*dps-translate-vim-commands*
@@ -73,5 +82,16 @@ VARIABLES				*dps-translate-vim-variables*
 	The string of translation source language.
 	Default: 'ja'
 
+`g:dps_translate_engine`		*g:dps_translate_engine*
+	Use engine.
+	Default: 'google'
+
+`g:dps_translate_deepl_token`		*g:dps_translate_deepl_token*
+	Token for using deepl.
+	Default: None
+
+`g:dps_translate_deepl_is_pro`		*g:dps_translate_deepl_is_pro*
+	Either pro plan or free plan.
+	Default: v:false
 
 vim:tw=78:fo=tcq2mM:ts=4:ft=help:norl:noet:fdm=marker:fen:
