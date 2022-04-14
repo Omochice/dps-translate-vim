@@ -1,8 +1,9 @@
 import {
   Denops,
+  ensureArray,
   ensureNumber,
-  ensureString,
   fn,
+  isNumber,
   openPopup,
   vars,
 } from "./deps.ts";
@@ -50,36 +51,65 @@ async function constract(
   return results;
 }
 
+type Option = {
+  split: "floating" | "top" | "bottom" | "left" | "right";
+  bufname: string;
+  width?: number;
+  autoclose?: boolean;
+};
+
 export async function open(
   denops: Denops,
-  split: "floating" | "top" | "bottom" | "left" | "right",
   contents: string[],
-  option? = { autoclose: true },
+  option: Option = { split: "floating", bufname: "NO NAME" },
 ): Promise<void> {
+  // console.log(contents);
   // prepare buffer
-  const bufnr = await fn.bufnr(denops, "dps-translate", true);
+  const bufnr = await fn.bufnr(denops, option.bufname, true);
+  console.log(bufnr);
   await fn.bufload(denops, bufnr);
   await fn.setbufvar(denops, bufnr, "&modifiable", 1);
   await fn.deletebufline(denops, bufnr, 1, "$");
   // if use floating window, split contents per winwidth
-  if (split == "floating") {
-    const winWidth = fn.winwidth(denops, ".");
-    const floatingWidthRate: Promise<number> = vars.g.get(
-      denops,
-      "dps_translate_floating_rate",
-      0.8,
-    );
-    const floatingWidth = Math.floor(
-      ensureNumber(await winWidth) * await floatingWidthRate,
-    );
+  if (option.split == "floating") {
+    const floatingWidth = option.width ?? await fn.winwidth(denops, ".");
+    // console.log(floatingWidth);
+    // const floatingWidthRate: Promise<number> = vars.g.get(
+    //   denops,
+    //   "dps_translate_floating_rate",
+    //   0.8,
+    // );
+    // const floatingWidth = Math.floor(
+    //   ensureNumber(await winWidth) * await floatingWidthRate,
+    // );
     const constracted: string[] = [];
     for (const x of contents) {
       for (const splitted of await constract(denops, x, floatingWidth)) {
         constracted.push(splitted);
       }
     } // FIXME sentences.map() not work well
+    console.log(contents);
+    const contentWidth = await (async () => {
+      if (contents.length != constracted.length) {
+        return floatingWidth;
+      } else {
+        const widths = [];
+        for (const line of constracted) {
+          widths.push(await fn.strdisplaywidth(denops, line));
+        }
+        console.log(widths);
+        return Math.max(...ensureArray(widths, isNumber));
+      }
+    })(); // TODO: refactor
+    console.log(contentWidth);
     await fn.setbufline(denops, bufnr, 1, constracted);
-    openPopup(denops, constracted, option); // TODO: use filled buffer
+    openPopup({
+      denops: denops,
+      bufnr: bufnr,
+      position: "cursor",
+      size: { width: contentWidth, height: constracted.length },
+      autoclose: option.autoclose,
+    });
   } else {
     await fn.setbufline(denops, bufnr, 1, contents);
     const commands = {
@@ -88,7 +118,9 @@ export async function open(
       "left": `leftabove vertical sbuffer ${bufnr}`,
       "right": `rightbelow vertical sbuffer ${bufnr}`,
     };
-    await denops.cmd(commands[split]);
+    if (await fn.bufwinnr(denops, option.bufname) == -1) {
+      await denops.cmd(commands[option.split]);
+    }
   }
   await Promise.all([
     fn.setbufvar(denops, bufnr, "&modifiable", 0),
