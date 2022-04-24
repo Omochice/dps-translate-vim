@@ -1,4 +1,4 @@
-if exists('g:loaded_dps_translate_vim') && g:loaded_dps_translate_vim
+if get('g', 'loaded_dps_translate_vim', v:false)
   finish
 endif
 
