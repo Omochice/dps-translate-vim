@@ -94,4 +94,18 @@ VARIABLES				*dps-translate-vim-variables*
 	Either pro plan or free plan.
 	Default: v:false
 
+`g:dps_translate_border`		*g:dps_translate_border*
+	Dict for border like:
+	let g:dps_translate_border = {
+	    \ 'topLeft': '┌',
+	    \ 'top':  '─',
+	    \ 'topRight': '┐',
+	    \ 'left': '│',
+	    \ 'right': '│',
+	    \ 'bottomLeft': '└',
+	    \ 'bottom':  '─',
+	    \ 'bottomRight': '┘',
+	    \ }
+	Default: 'none' (no border)
+
 vim:tw=78:fo=tcq2mM:ts=4:ft=help:norl:noet:fdm=marker:fen:

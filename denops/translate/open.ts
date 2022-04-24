@@ -8,6 +8,16 @@ import {
   vars,
 } from "./deps.ts";
 
+type BorderStyle = {
+  topLeft: string;
+  top: string;
+  topRight: string;
+  right: string;
+  bottomRight: string;
+  bottom: string;
+  bottomLeft: string;
+  left: string;
+};
 async function slicing(
   denops: Denops,
   text: string,
@@ -56,6 +66,7 @@ type Option = {
   bufname: string;
   width?: number;
   autoclose?: boolean;
+  border?: BorderStyle | "none";
 };
 
 export async function open(
@@ -95,6 +106,7 @@ export async function open(
       position: "cursor",
       size: { width: contentWidth, height: constracted.length },
       autoclose: option.autoclose,
+      border: option.border,
     });
   } else {
     await fn.setbufline(denops, bufnr, 1, contents);
