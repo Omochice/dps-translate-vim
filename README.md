@@ -50,6 +50,44 @@ This plugin is depends on [denops.vim](https://github.com/vim-denops/denops.vim)
 
 ![Join](https://i.gyazo.com/7a3a477763de36d4fc754b9556bd8ffe.gif)
 
+## VARIABLES
+
+- `g:dps_translate_source`
+	The string of translation source language.
+	Default: `'en'`
+
+- `g:dps_translate_target`
+	The string of translation source language.
+	Default: `'ja'`
+
+- `g:dps_translate_engine`
+	Use engine.
+	Default: `'google'`
+
+- `g:dps_translate_deepl_token`
+	Token for using deepl.
+	Default: None
+
+- `g:dps_translate_deepl_is_pro`
+	Either pro plan or free plan.
+	Default: `v:false`
+
+- `g:dps_translate_border`
+	Dict for border like:
+    ```vim
+	let g:dps_translate_border = {
+	    \ 'topLeft': '┌',
+	    \ 'top':  '─',
+	    \ 'topRight': '┐',
+	    \ 'left': '│',
+	    \ 'right': '│',
+	    \ 'bottomLeft': '└',
+	    \ 'bottom':  '─',
+	    \ 'bottomRight': '┘',
+	    \ }
+    ```
+	Default: `'none'` (no border)
+
 ## LICENSE
 
 MIT

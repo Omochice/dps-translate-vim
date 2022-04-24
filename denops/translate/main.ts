@@ -106,6 +106,7 @@ export function main(denops: Denops): void {
         bufname: "dps-translate.output",
         width: winWidth,
         autoclose: true,
+        border: await vars.g.get(denops, "dps_translate_border", "none"),
       });
     },
   };
