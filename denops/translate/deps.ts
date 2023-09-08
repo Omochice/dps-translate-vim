@@ -10,5 +10,5 @@ export {
   ensureString,
   isNumber,
   isString,
-} from "https://deno.land/x/unknownutil@v3.4.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.6.0/mod.ts";
 export { openPopup } from "https://pax.deno.dev/Omochice/dps-popup-toy/mod.ts";
