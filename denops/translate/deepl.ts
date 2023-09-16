@@ -1,3 +1,6 @@
+import type { Translator } from "./translator.ts";
+import { ensure, is } from "./deps.ts";
+
 interface DeeplResponce {
   translations: TranslationResponce[];
 }
@@ -24,13 +27,20 @@ export async function translate(
   text: string[],
   sourceLanguage: string,
   targetLanguage: string,
-  option: { authKey: string; isPro?: boolean } = { authKey: "", isPro: false },
+  option: unknown = { authKey: "" },
 ): Promise<DeeplResponce> {
-  const endpoint = option.isPro
+  const opt = ensure(
+    option,
+    is.ObjectOf({
+      authKey: is.String,
+      isPro: is.OptionalOf(is.Boolean),
+    }),
+  );
+  const endpoint = opt.isPro
     ? "https://api.deepl.com/v2/translate"
     : "https://api-free.deepl.com/v2/translate";
   const body = new URLSearchParams({
-    auth_key: option.authKey,
+    auth_key: opt.authKey,
     source_lang: sourceLanguage,
     target_lang: targetLanguage,
     text: text.join("\n"),
@@ -49,10 +59,19 @@ export async function translate(
   return response;
 }
 
-export function extractTranslatedText(response: DeeplResponce): string {
-  let text = "";
-  for (const translation of response.translations) {
-    text += translation.text;
-  }
-  return text;
+export function extractTranslatedText(response: unknown): string {
+  return ensure(
+    response,
+    is.ObjectOf({
+      translations: is.ArrayOf(is.ObjectOf({
+        text: is.String,
+      })),
+    }),
+  ).translations
+    .map(({ text }) => text).join("");
 }
+
+export const deepl: Translator = {
+  translate,
+  extractTranslatedText,
+};

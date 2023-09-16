@@ -1,3 +1,6 @@
+import type { Translator } from "./translator.ts";
+import { ensure, is } from "./deps.ts";
+
 interface TranslateResult {
   code: number;
   text: string;
@@ -7,7 +10,7 @@ export async function translate(
   text: string[],
   sourceLanguage: string,
   targetLanguage: string,
-  _option?: null,
+  _option?: unknown,
 ): Promise<TranslateResult> {
   const endpoint =
     "https://script.google.com/macros/s/AKfycbzdOBxUB9-PeT86IhOJO7oTbjEjJAf8ECUfrqW06eKLQTy8xdaLtUBmexx94Jl3cLNb/exec";
@@ -37,6 +40,16 @@ export async function translate(
   }
 }
 
-export function extractTranslatedText(response: TranslateResult): string {
-  return response.text;
+export function extractTranslatedText(response: unknown): string {
+  return ensure(
+    response,
+    is.ObjectOf({
+      text: is.String,
+    }),
+  ).text;
 }
+
+export const google: Translator = {
+  translate,
+  extractTranslatedText,
+};

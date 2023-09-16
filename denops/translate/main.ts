@@ -1,7 +1,8 @@
 import { assert, Denops, ensure, fn, is, vars } from "./deps.ts";
+import type { Translator } from "./translator.ts";
 import { open } from "./open.ts";
-import * as deepl from "./deepl.ts";
-import * as google from "./translate.ts";
+import { deepl } from "./deepl.ts";
+import { google } from "./translate.ts";
 
 export function main(denops: Denops): void {
   denops.dispatcher = {
@@ -56,17 +57,17 @@ export function main(denops: Denops): void {
       });
 
       // Translation
-      const engines = {
-        google: google,
-        deepl: deepl,
-      } as const; // name: funcRef
+      const engines = new Map<string, Translator>([
+        ["google", google],
+        ["deppl", deepl],
+      ]);
       const engine = await vars.g.get(denops, "dps_translate_engine", "google");
       assert(engine, is.String);
-      if (!engine in engines) {
+      const choised = engines.get(engine);
+      if (choised === undefined) {
         console.error(`[dps-translate] ${engine} is not provided`);
         return;
       }
-      const choised = engines[engine];
 
       let translated: string;
       try {
@@ -76,7 +77,7 @@ export function main(denops: Denops): void {
           `dps_translate_${engine}_is_pro`,
           false,
         );
-        const res = await choised.translate(text, source, target, {
+        const res = await choised.translate([text], source, target, {
           authKey: await token,
           isPro: await isPro,
         });
