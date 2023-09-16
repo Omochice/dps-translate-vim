@@ -1,12 +1,4 @@
-import {
-  Denops,
-  ensureArray,
-  ensureNumber,
-  fn,
-  isNumber,
-  openPopup,
-  vars,
-} from "./deps.ts";
+import { Denops, ensure, fn, is, openPopup } from "./deps.ts";
 
 type BorderStyle = {
   topLeft: string;
@@ -96,7 +88,7 @@ export async function open(
         for (const line of constracted) {
           widths.push(await fn.strdisplaywidth(denops, line));
         }
-        return Math.max(...ensureArray(widths, isNumber));
+        return Math.max(...ensure(widths, is.ArrayOf(is.Number)));
       }
     })(); // TODO: refactor
     await fn.setbufline(denops, bufnr, 1, constracted);

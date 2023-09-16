@@ -1,15 +1,4 @@
-import {
-  assertString,
-  Denops,
-  ensureArray,
-  ensureNumber,
-  ensureString,
-  execute,
-  fn,
-  isString,
-  openPopup,
-  vars,
-} from "./deps.ts";
+import { assert, Denops, ensure, fn, is, vars } from "./deps.ts";
 import { open } from "./open.ts";
 import * as deepl from "./deepl.ts";
 import * as google from "./translate.ts";
@@ -17,11 +6,7 @@ import * as google from "./translate.ts";
 export function main(denops: Denops): void {
   denops.dispatcher = {
     async dpsTranslate(
-      bang: unknown,
-      line1: number,
-      line2: number,
-      joinWithSpace: unknown,
-      arg: unknown,
+      args: unknown,
     ): Promise<void> {
       // Get text
       // const text: string[] = [];
@@ -32,13 +17,25 @@ export function main(denops: Denops): void {
       //   text.push(ensureString(arg));
       // }
       // console.log(line1, line2)
-      const text: string[] = [
-        arg ?? (
-          line1 == line2
-            ? await fn.getline(denops, line1)
-            : ((await fn.getline(denops, line1, line2)).join(" "))
-        ),
-      ];
+      const [bang, line1, line2, joinWithSpace, arg] = ensure(
+        args,
+        is.Array,
+      );
+      const text = await (async () => {
+        if (is.String(arg)) {
+          return arg;
+        }
+        if (line1 === line2) {
+          return await fn.getline(denops, ensure(line1, is.Number));
+        }
+        return (await fn.getline(
+          denops,
+          ensure(line1, is.Number),
+          ensure(line2, is.Number),
+        )).join(
+          joinWithSpace ? " " : "",
+        );
+      })();
 
       // Language identification
       const sourceLanguage: Promise<string> = vars.g.get(
@@ -62,9 +59,9 @@ export function main(denops: Denops): void {
       const engines = {
         google: google,
         deepl: deepl,
-      }; // name: funcRef
+      } as const; // name: funcRef
       const engine = await vars.g.get(denops, "dps_translate_engine", "google");
-      assertString(engine);
+      assert(engine, is.String);
       if (!engine in engines) {
         console.error(`[dps-translate] ${engine} is not provided`);
         return;
@@ -98,7 +95,7 @@ export function main(denops: Denops): void {
 
       // open buffer
       const winWidth = Math.floor(
-        ensureNumber(await fn.winwidth(denops, ".")) * 0.8,
+        ensure(await fn.winwidth(denops, "."), is.Number) * 0.8,
       );
 
       open(denops, sentences, {
