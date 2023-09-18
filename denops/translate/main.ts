@@ -10,7 +10,7 @@ export function main(denops: Denops): void {
       ...[bang, line1, line2, joinWithSpace, arg]: unknown[]
     ): Promise<void> {
       const text = await (async () => {
-        if (is.String(arg)) {
+        if (is.String(arg) && !/^\s*$/.test(arg)) {
           return arg;
         }
         if (line1 === line2) {
