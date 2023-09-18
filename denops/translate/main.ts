@@ -7,21 +7,8 @@ import { google } from "./translate.ts";
 export function main(denops: Denops): void {
   denops.dispatcher = {
     async dpsTranslate(
-      args: unknown,
+      ...[bang, line1, line2, joinWithSpace, arg]: unknown[]
     ): Promise<void> {
-      // Get text
-      // const text: string[] = [];
-      // if (typeof arg === "undefined") {
-      //   const lines = await fn.getline(denops, line1, line2);
-      //   text.push(...(joinWithSpace ? [lines.join(" ")] : text));
-      // } else {
-      //   text.push(ensureString(arg));
-      // }
-      // console.log(line1, line2)
-      const [bang, line1, line2, joinWithSpace, arg] = ensure(
-        args,
-        is.Array,
-      );
       const text = await (async () => {
         if (is.String(arg)) {
           return arg;
