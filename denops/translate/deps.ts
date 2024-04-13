@@ -7,5 +7,5 @@ export {
   assert,
   ensure,
   is,
-} from "https://deno.land/x/unknownutil@v3.17.2/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.17.3/mod.ts";
 export { openPopup } from "https://pax.deno.dev/Omochice/dps-popup-toy/mod.ts";
