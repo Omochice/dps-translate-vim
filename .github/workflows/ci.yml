@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Git Checkout Deno Module
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
       - name: Set up Deno
         uses: denolib/setup-deno@4df079f84f6c4ef488b04806df9af59e51d09bfb # v2
       - name: Test Deno Module
